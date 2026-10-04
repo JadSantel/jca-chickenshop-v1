@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const DIRECTIONS = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent("Mr. James Chicken, ĐT20, tổ dân phố Xuân Tiến, Phong Nha, Quảng Trị 47257, Vietnam");
+const DIRECTIONS = "https://maps.app.goo.gl/jDgP2zoeXUoRQ2UP6";
 const PHONE = "tel:+84965030442";
 const MESSENGER = "https://m.me/mrjameschicken";
 
