@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Vollkorn, Work_Sans } from "next/font/google";
+import { Barlow_Condensed, Work_Sans } from "next/font/google";
 import "./globals.css";
 
-const vollkorn = Vollkorn({ variable: "--font-display", subsets: ["latin", "vietnamese"] });
+const barlowCondensed = Barlow_Condensed({ variable: "--font-display", subsets: ["latin", "vietnamese"], weight: ["500", "600", "700", "800", "900"] });
 const workSans = Work_Sans({ variable: "--font-body", subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
-  title: "Mr. James Chicken Phong Nha | Fresh Chicken & Burgers",
-  description: "Freshly prepared chicken burgers, crispy chicken, homestyle sides, opening hours and directions to Mr. James Chicken in Phong Nha, Vietnam.",
+  title: "Mr. James Chicken Phong Nha | Menu, Hours & Directions",
+  description: "Crispy chicken and generous burgers in Phong Nha. Explore the menu, see opening hours, and get directions to Mr. James Chicken on ĐT20.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return <html lang="en" className={`${vollkorn.variable} ${workSans.variable}`}><body>{children}</body></html>;
+  return <html lang="en" className={`${barlowCondensed.variable} ${workSans.variable}`}><body>{children}</body></html>;
 }

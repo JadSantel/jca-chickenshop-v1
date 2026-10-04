@@ -3,113 +3,99 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const menu = [
-  { category: "burgers", badge: "#1 Bestseller", name: "Classic Crispy Chicken Burger", price: "115,000₫", usd: "~$4.50", copy: "Crunchy organic chicken breast, homemade pickles, crisp lettuce, and diner sauce on a buttery brioche bun. Includes seasoned fries.", note: "Served with hand-cut fries", extra: "Add cheese +15,000₫" },
-  { category: "burgers", badge: "Spicy Special", name: "Spicy Cave Trekker Burger", price: "125,000₫", usd: "~$4.90", copy: "Double-dipped spicy organic fillet tossed in cayenne glaze, jalapeños, purple cabbage slaw, and chipotle mayo. Includes fries.", note: "Served with hand-cut fries", extra: "Extra kick" },
-  { category: "burgers", badge: "Giant Feast", name: "Double Stack Chicken Burger", price: "160,000₫", usd: "~$6.30", copy: "Two crispy organic fillets, double melted cheddar, grilled onions, crunchy pickles, and house smoked barbecue spread.", note: "Huge post-cave portion", extra: "Very filling" },
-  { category: "fried", badge: "House Heritage", name: "3-Piece Crispy Basket", price: "135,000₫", usd: "~$5.30", copy: "Two organic drumsticks and one bone-in thigh soaked in seasoned buttermilk. Served with homemade chips and sweet garlic dip.", note: "Includes 2 house dips", extra: "Hot & juicy" },
-  { category: "fried", badge: "Pure Tenderloin", name: "6-Piece Hand-Breaded Tenders", price: "120,000₫", usd: "~$4.70", copy: "Whole strips of fresh organic chicken breast dredged in seasoned flour. Light, extra crunchy, served with ranch or spicy honey.", note: "Kid & adult favorite", extra: "100% breast meat" },
-  { category: "sides", badge: "Fresh Cut", name: "Hand-Cut Russet Potato Chips", price: "45,000₫", usd: "~$1.75", copy: "Thick-cut country potatoes fried until golden and crisp, dusted in rosemary, garlic salt, and cracked pepper.", note: "Made fresh daily", extra: "Piping hot" },
-  { category: "sides", badge: "Cool & Crisp", name: "Crisp Homemade Coleslaw", price: "35,000₫", usd: "~$1.40", copy: "Finely shredded local cabbage, carrot, and fresh parsley tossed in chilled tangy buttermilk and apple cider vinaigrette.", note: "Refreshing balance", extra: "Scratch made" },
-  { category: "drinks", badge: "Diner Dessert", name: "Crisp Fried Apple Pie", price: "50,000₫", usd: "~$2.00", copy: "Flaky pastry pocket stuffed with cinnamon-spiced caramel apples, dusted with confectioner sugar and vanilla drizzle.", note: "Warm & comforting", extra: "Sweet finish" },
-  { category: "drinks", badge: "Cold Drinks", name: "Cold Beverages & Fresh Limeade", price: "25–40,000₫", usd: "~$1.00–$1.60", copy: "Local craft sodas, iced lemon tea, fresh Vietnamese limeade with mint, mineral water, and Saigon lager.", note: "Ice-cold refresher", extra: "Great after caving" },
+const DIRECTIONS = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent("Mr. James Chicken, ĐT20, tổ dân phố Xuân Tiến, Phong Nha, Quảng Trị 47257, Vietnam");
+const PHONE = "tel:+84965030442";
+const MESSENGER = "https://m.me/mrjameschicken";
+
+const categories = [
+  { id: "burgers", label: "Chicken burgers" },
+  { id: "fried", label: "Fried chicken" },
+  { id: "sides", label: "Sides" },
+  { id: "drinks", label: "Desserts & drinks" },
+] as const;
+
+type Category = (typeof categories)[number]["id"];
+
+const menu: { category: Category; name: string; price: string; description: string; detail?: string }[] = [
+  { category: "burgers", name: "Classic Crispy Chicken Burger", price: "115,000₫", description: "Crispy chicken breast, house pickles, lettuce and diner sauce on a buttery brioche bun. Served with seasoned fries.", detail: "Add cheese +15,000₫" },
+  { category: "burgers", name: "Spicy Cave Trekker Burger", price: "125,000₫", description: "Spicy chicken fillet with cayenne glaze, jalapeños, purple cabbage slaw and chipotle mayo. Served with fries." },
+  { category: "burgers", name: "Double Stack Chicken Burger", price: "160,000₫", description: "Two crispy chicken fillets with cheddar, grilled onions, pickles and a smoked barbecue spread." },
+  { category: "fried", name: "3-Piece Crispy Basket", price: "135,000₫", description: "Two drumsticks and a bone-in thigh in seasoned buttermilk batter. Served with chips and a garlic dip." },
+  { category: "fried", name: "Wild Honey Glazed Chicken", price: "135,000₫", description: "Crispy chicken finished with wild honey and cracked pepper. Served with golden potato chips." },
+  { category: "fried", name: "6-Piece Hand-Breaded Tenders", price: "120,000₫", description: "Chicken breast tenders in seasoned flour, served with ranch or spicy honey." },
+  { category: "sides", name: "Hand-Cut Russet Potato Chips", price: "45,000₫", description: "Thick-cut potatoes fried until golden, with rosemary, garlic salt and cracked pepper." },
+  { category: "sides", name: "Crisp Homemade Coleslaw", price: "35,000₫", description: "Cabbage, carrot and parsley in a tangy buttermilk and apple cider dressing." },
+  { category: "drinks", name: "Crisp Fried Apple Pie", price: "50,000₫", description: "Warm pastry filled with cinnamon-spiced apples, finished with sugar and vanilla drizzle." },
+  { category: "drinks", name: "Cold Beverages & Fresh Limeade", price: "25–40,000₫", description: "Sodas, iced lemon tea, limeade with mint, mineral water and Saigon lager." },
 ];
 
-const filters = [
-  ["burgers", "Chicken Burgers"],
-  ["fried", "Fried Chicken Combos"],
-  ["sides", "Homestyle Chips & Sides"],
-  ["drinks", "Desserts & Cold Drinks"],
-];
-
-const bestsellers = [
-  { image: "/images/chicken-burger.png", badge: "#1 TOP BESTSELLER", name: "Mr. James Chicken Burger", price: "115,000₫", usd: "~$4.50 USD", label: "Signature House Bun", copy: "Thick organic fried chicken fillet, house-brined crunchy pickles, fresh greens, and secret diner mayo on toasted brioche. Served with hand-cut fries.", detail: "Voted #1 Burger in Phong Nha" },
-  { image: "/images/crispy-combo.png", badge: "ORGANIC CRUNCH", name: "Crispy Heritage Combo", price: "145,000₫", usd: "~$5.70 USD", label: "24-Hr Brined", copy: "Golden drumstick, bone-in thigh, and crisp tender fillet seasoned in herb buttermilk batter. Served with golden fries and homemade garlic-lime dip.", detail: "Mild or Spicy Rub" },
-  { image: "/images/honey-chicken.png", badge: "GABRIEL'S SPECIAL", name: "Wild Honey Glazed Chicken", price: "135,000₫", usd: "~$5.30 USD", label: "Wild Forest Honey", copy: "Crisp battered organic chicken basted after frying with Quang Binh wild flower honey, cracked black pepper, and sea salt.", detail: "Local Mountain Honey" },
+const favorites = [
+  { name: "Classic Crispy Chicken Burger", price: "115,000₫", image: "/images/hero-burger-illustrative.png", alt: "Illustrative serving of a crispy chicken burger with fries", caption: "Illustrative serving", description: "The crisp, generous burger people come back for." },
+  { name: "3-Piece Crispy Basket", price: "135,000₫", image: "/images/crispy-basket-illustrative.png", alt: "Illustrative serving of three pieces of crispy chicken with fries and garlic dip", caption: "Illustrative serving", description: "Golden fried chicken, chips and a house dip." },
+  { name: "Wild Honey Glazed Chicken", price: "135,000₫", image: "/images/wild-honey-illustrative.png", alt: "Illustrative serving of honey-glazed fried chicken with potato chips", caption: "Illustrative serving", description: "A sweet and savory finish with pepper and honey." },
 ];
 
 const reviews = [
-  { initials: "LW", name: "Liam W.", meta: "Melbourne, Australia · Google Review", quote: "Hands down the best chicken burger I have eaten anywhere in Southeast Asia. After a 2-day jungle trek in Phong Nha caves, this place hit the spot. Super fresh, juicy chicken and great chips." },
-  { initials: "NT", name: "Nguyễn Tuấn", meta: "Phong Nha Local Guide · Verified Visit", quote: "Gà rất tươi và thơm ngon! Thịt gà đồi tự nhiên săn chắc chứ không bở như gà công nghiệp. Chủ quán nhiệt tình và mến khách. Cả gia đình tôi thường ghé ăn mỗi cuối tuần." },
-  { initials: "SK", name: "Sophie K.", meta: "Germany · Backpacker & Food Lover", quote: "The crispiness of the chicken is unmatched, and knowing it is fresh made all the difference. Fair prices in VND and the friendliest atmosphere. A must-visit when in Phong Nha." },
+  { name: "Liam W.", source: "Melbourne, Australia · Google Review", quote: "Hands down the best chicken burger I have eaten anywhere in Southeast Asia. After a 2-day jungle trek in Phong Nha caves, this place hit the spot. Super fresh, juicy chicken and great chips." },
+  { name: "Nguyễn Tuấn", source: "Phong Nha Local Guide · Verified Visit", quote: "Gà rất tươi và thơm ngon! Thịt gà đồi tự nhiên săn chắc chứ không bở như gà công nghiệp. Chủ quán nhiệt tình và mến khách. Cả gia đình tôi thường ghé ăn mỗi cuối tuần." },
+  { name: "Sophie K.", source: "Germany · Backpacker & Food Lover", quote: "The crispiness of the chicken is unmatched, and knowing it is fresh made all the difference. Fair prices in VND and the friendliest atmosphere. A must-visit when in Phong Nha." },
 ];
 
-function Icon({ children }: { children: React.ReactNode }) {
-  return <span className="icon" aria-hidden="true">{children}</span>;
+function Icon({ name, size = 20 }: { name: "pin" | "arrow" | "clock" | "star" | "phone" | "menu" | "close"; size?: number }) {
+  const paths = {
+    pin: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
+    arrow: <><path d="M4 12h15" /><path d="m13 6 6 6-6 6" /></>,
+    clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+    star: <path d="m12 2 3.1 6.3 7 1-5 4.9 1.2 6.9-6.3-3.3-6.3 3.3 1.2-6.9-5-4.9 7-1Z" />,
+    phone: <path d="M6.6 2.8 9.7 6l-1.6 2.3a15 15 0 0 0 7.6 7.6l2.3-1.6 3.2 3.1-1.8 3.6C10.2 20.4 3.6 13.8 3 4.6l3.6-1.8Z" />,
+    menu: <path d="M3 6h18M3 12h18M3 18h18" />,
+    close: <path d="M5 5l14 14M19 5 5 19" />,
+  };
+  return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill={name === "star" ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
+}
+
+function Brand() {
+  return <span className="brand-lockup"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M12 18c-2-4 0-7 4-7-1-4 2-7 6-6 2-4 7-3 9 1 4-1 7 2 6 6 5 7 0 21-11 25-7 3-15-2-17-9-1-4 0-7 3-10Z" fill="currentColor" /><path d="m34 19 11 5-10 4" fill="var(--gold)" /><circle cx="28" cy="17" r="2" fill="var(--cream)" /><path d="M19 29c4 2 8 2 12 0" stroke="var(--cream)" strokeWidth="2" strokeLinecap="round" /></svg></span><span className="brand-type"><strong>MR. JAMES<br />CHICKEN</strong><small>PHONG NHA</small></span></span>;
 }
 
 export default function Home() {
-  const [activeCategory, setActiveCategory] = useState("burgers");
+  const [activeCategory, setActiveCategory] = useState<Category>("burgers");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const visibleMenu = menu.filter((item) => item.category === activeCategory);
 
-  return (
-    <>
-      <a className="skip-link" href="#main">Skip to content</a>
-      <div className="notice-bar">
-        <div className="notice-inner"><span className="open-chip"><i />Open Daily</span><span>10:00 AM – 10:30 PM · ĐT20, Phong Nha National Park Region</span><span className="policy-chip">Dine-in · Takeaway · Walk-ins welcome</span><a href="tel:+84965030442">+84 965 030 442</a></div>
+  return <>
+    <a className="skip-link" href="#main">Skip to content</a>
+
+    <header className="site-header" id="home">
+      <div className="header-inner shell">
+        <a href="#home" className="brand-link" aria-label="Mr. James Chicken, home" onClick={() => setMenuOpen(false)}><Brand /></a>
+        <nav className="main-nav" aria-label="Main navigation"><a href="#home">Home</a><a href="#menu">Menu</a><a href="#story">Our story</a><a href="#reviews">Reviews</a><a href="#visit">Visit</a></nav>
+        <a className="header-directions" href={DIRECTIONS} target="_blank" rel="noopener noreferrer"><Icon name="pin" size={18} /> Get directions</a>
+        <button className="nav-toggle" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="main-navigation-mobile" onClick={() => setMenuOpen((open) => !open)}><Icon name={menuOpen ? "close" : "menu"} size={25} /></button>
       </div>
-      <header className="site-header">
-        <div className="header-inner">
-          <a className="brand" href="#hero" aria-label="Mr. James Chicken home">
-            <Image src="/images/logo.png" width={56} height={56} alt="Mr. James Chicken Phong Nha logo" priority />
-            <span><strong>Mr. James Chicken</strong><small>Phong Nha · Organic & Fresh</small></span>
-          </a>
-          <nav aria-label="Main navigation"><a href="#menu">Menu</a><a href="#bestsellers">Bestsellers</a><a href="#story">Our Story</a><a href="#reviews">Reviews</a><a href="#location">Find Us</a></nav>
-          <div className="header-actions"><span className="language"><b>EN</b><span>VI</span></span><a className="direction-small" href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer"><Icon>➤</Icon><span>Directions</span></a></div>
-        </div>
-      </header>
+      <nav id="main-navigation-mobile" className={`mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Mobile navigation"><a href="#menu" onClick={() => setMenuOpen(false)}>Explore menu</a><a href="#story" onClick={() => setMenuOpen(false)}>Our story</a><a href="#reviews" onClick={() => setMenuOpen(false)}>Reviews</a><a href="#visit" onClick={() => setMenuOpen(false)}>Hours & location</a></nav>
+    </header>
 
-      <main id="main">
-        <section className="hero" id="hero">
-          <div className="container hero-grid">
-            <div className="hero-copy">
-              <div className="eyebrow-row"><span className="eyebrow"><Icon>❧</Icon> Organic chicken and always fresh</span><span className="eyebrow pale"><Icon>⌂</Icon> Dine-in & takeaway</span></div>
-              <h1>Fresh, artisanal chicken in the heart of Phong Nha</h1>
-              <p className="lead">Welcome to Phong Nha&apos;s haven for crispy fried chicken, chicken burgers, and homestyle hospitality. Crafted with over 30 years of culinary experience and cooked fresh to order every day.</p>
-              <div className="hero-actions"><a className="button primary" href="#menu"><Icon>☷</Icon>Explore food menu</a><a className="button amber" href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer"><Icon>➤</Icon>Find on Google Maps</a><a className="button outline" href="https://m.me/mrjameschicken" target="_blank" rel="noreferrer"><Icon>✉</Icon>Messenger</a></div>
-              <div className="facts"><div><strong>4.9 <span className="stars">★★★★★</span></strong><small>Google Reviews</small></div><div><strong>ĐT20 Road</strong><small>Xuân Tiến, Phong Nha</small></div><div><strong><i className="live-dot" /> 10:00 – 22:30</strong><small>Open all 7 days</small></div></div>
-            </div>
-            <div className="hero-plaque">
-              <div className="plaque-top"><span>Since 1984 expertise</span><span>Phong Nha National Park</span></div>
-              <div className="emblem"><Image src="/images/heritage-logo.png" fill sizes="240px" alt="Mr. James Chicken heritage emblem" /><b>Freshly prepared</b></div>
-              <h2>Mr. James Chicken Phong Nha</h2>
-              <p>Handcrafted chicken burgers, golden crunchy drumsticks, and comforting sides after a day of cave trekking.</p>
-              <div className="dining-note"><Icon>♨</Icon><span><strong>Dine-in & Takeaway</strong><small>No reservations needed</small></span><b>✓</b></div>
-            </div>
-          </div>
-        </section>
+    <main id="main">
+      <section className="hero" aria-labelledby="hero-title">
+        <div className="hero-copy"><div className="hero-copy-inner"><h1 id="hero-title">MR. JAMES<br />CHICKEN</h1><p className="hero-place">PHONG NHA</p><p className="hero-experience">30+ YEARS OF COOKING</p><p className="hero-intro">Crispy chicken, generous burgers and a welcome worth stopping for. Find us on ĐT20 in the heart of Phong Nha.</p><div className="hero-actions"><a className="button button-primary" href={DIRECTIONS} target="_blank" rel="noopener noreferrer"><Icon name="pin" /> Get directions</a><a className="button button-outline" href="#menu">View menu <Icon name="arrow" /></a></div></div></div>
+        <figure className="hero-media"><Image src="/images/hero-burger-illustrative.png" alt="Illustrative serving of a crispy chicken burger with fries" fill priority sizes="(max-width: 760px) 100vw, 55vw" /><figcaption>Illustrative serving</figcaption></figure>
+      </section>
 
-        <section className="section" id="bestsellers">
-          <div className="container">
-            <div className="section-heading split"><div><span className="kicker">✓ Traveler & local favorites</span><h2>Phong Nha&apos;s signature bestsellers</h2></div><p>Fresh chicken hand-seasoned and cooked to crisp perfection. Generous portions packed with flavor for hungry explorers.</p></div>
-            <div className="bestseller-grid">{bestsellers.map((item, index) => <article className={`food-card ${index === 0 ? "featured" : ""}`} key={item.name}><div className="food-photo"><Image src={item.image} fill sizes="(max-width: 768px) 100vw, 33vw" alt={item.name} /><span className="food-badge">{item.badge}</span><small>{item.label}</small></div><div className="food-title"><h3>{item.name}</h3><div><b>{item.price}</b><small>{item.usd}</small></div></div><p>{item.copy}</p><div className="card-foot"><span>♡ {item.detail}</span><b>Dine-in fresh</b></div></article>)}</div>
-          </div>
-        </section>
+      <section className="proof-strip" aria-label="Restaurant details"><div className="shell proof-grid"><div><Icon name="star" size={26} /><p><strong>4.9 RATING</strong><span>Google reviews</span></p></div><div><span className="proof-since">1984</span><p><strong>SINCE 1984</strong><span>Gabriel’s experience</span></p></div><div><Icon name="clock" size={28} /><p><strong>OPEN DAILY</strong><span>10:00 AM – 10:30 PM</span></p></div><div><Icon name="pin" size={29} /><p><strong>ĐT20 · PHONG NHA</strong><span>Walk in and eat with us</span></p></div></div></section>
 
-        <section className="section menu-section" id="menu">
-          <div className="container">
-            <div className="section-heading centered"><span className="kicker">Cooked to order</span><h2>Food & beverage menu</h2><p>Every piece is cut by hand, seasoned, and fried to crispy golden perfection upon your order. Clear prices in VND with tourist approximations.</p></div>
-            <div className="filters" role="group" aria-label="Filter menu categories">{filters.map(([key, label]) => <button type="button" className={activeCategory === key ? "active" : ""} onClick={() => setActiveCategory(key)} aria-pressed={activeCategory === key} key={key}>{label}</button>)}</div>
-            <div className="menu-grid">{menu.filter((item) => item.category === activeCategory).map((item) => <article className="menu-card" key={item.name}><div className="menu-price"><span>{item.badge}</span><div><b>{item.price}</b><small>{item.usd}</small></div></div><h3>{item.name}</h3><p>{item.copy}</p><div className="card-foot"><span>{item.note}</span><b>{item.extra}</b></div></article>)}</div>
-            <div className="policy-banner"><Icon>♨</Icon><div><h3>Fresh from our pans to your table</h3><p>We prioritize quality and serve every order at its best. Walk right in—no reservations required.</p></div><a className="button primary" href="tel:+84965030442">☎ +84 965 030 442</a></div>
-          </div>
-        </section>
+      <section className="favorites section-space shell" id="bestsellers" aria-labelledby="favorites-title"><div className="section-title-row"><h2 id="favorites-title">OUR BESTSELLERS</h2><a href="#menu" className="text-link">See the full menu <Icon name="arrow" size={18} /></a></div><div className="favorites-grid">{favorites.map((item) => <article className="favorite" key={item.name}><div className="favorite-image"><Image src={item.image} alt={item.alt} fill sizes="(max-width: 760px) 100vw, 33vw" /><span>{item.caption}</span></div><div className="favorite-body"><div className="favorite-heading"><h3>{item.name}</h3><strong>{item.price}</strong></div><p>{item.description}</p></div></article>)}</div></section>
 
-        <section className="section" id="story">
-          <div className="container story-grid">
-            <div className="story-plaque"><Image src="/images/story-logo.png" width={210} height={210} alt="Mr. James Chicken heritage emblem" /><span>Since 1984 heritage craft</span><h3>Mr. Gabriel&apos;s Kitchen</h3><p>ĐT20, tổ dân phố Xuân Tiến, Phong Nha</p><b className="stamp">✓ Over 3 decades of craft</b></div>
-            <div className="story-copy"><span className="kicker">Culinary experience & passion</span><h2>Over three decades in the kitchen: Mr. Gabriel&apos;s story</h2><p>Mr. Gabriel began his journey in the restaurant world in 1984. Across more than 30 years of culinary dedication, he developed a deep respect for honest cooking, balanced seasoning, and the joy of sharing hearty comfort food.</p><div className="story-list"><div><h3>1. Local chicken, prepared fresh</h3><p>Good ingredients and careful preparation let the natural richness of the food lead every bite.</p></div><div><h3>2. A welcoming table for travelers & locals</h3><p>Our diner brings together cave explorers, backpackers, and Phong Nha families craving genuine comfort meals.</p></div><div><h3>3. Handcrafted care in every bun & basket</h3><p>Every order is made with time-tested seasoning, patience, and warm hospitality.</p></div></div><blockquote>“When you cook with fresh ingredients and genuine care, food speaks every language. Welcome to our table in Phong Nha.” — Mr. Gabriel</blockquote></div>
-          </div>
-        </section>
+      <section className="menu-section section-space" id="menu" aria-labelledby="menu-title"><div className="shell"><div className="menu-heading"><div><h2 id="menu-title">THE MENU</h2><p>Find your reason to stop in. Prices are in Vietnamese đồng.</p></div><span className="menu-stamp">COOKED FRESH<br />TO ORDER</span></div><div className="menu-filters" role="group" aria-label="Menu categories">{categories.map((category) => <button type="button" key={category.id} aria-pressed={activeCategory === category.id} className={activeCategory === category.id ? "is-active" : ""} onClick={() => setActiveCategory(category.id)}>{category.label}</button>)}</div><div className="menu-list" aria-live="polite" key={activeCategory}>{visibleMenu.map((item) => <article className="menu-item" key={item.name}><div className="menu-item-top"><h3>{item.name}</h3><strong>{item.price}</strong></div><p>{item.description}</p>{item.detail && <small>{item.detail}</small>}</article>)}</div><div className="menu-note"><p>Ready to eat? We welcome walk-ins for dine-in and takeaway.</p><a href={DIRECTIONS} target="_blank" rel="noopener noreferrer">Find the restaurant <Icon name="arrow" size={18} /></a></div></div></section>
 
-        <section className="section reviews-section" id="reviews"><div className="container"><div className="section-heading centered"><span className="rating">★★★★★ <b>4.9 / 5.0 Google rating</b></span><h2>Loved by travelers & locals</h2><p>Feedback from international cave trekkers, holiday tourists, and Phong Nha residents.</p></div><div className="review-grid">{reviews.map((review) => <article className="review-card" key={review.name}><span className="stars">★★★★★</span><blockquote>“{review.quote}”</blockquote><div><span className="avatar">{review.initials}</span><p><b>{review.name}</b><small>{review.meta}</small></p></div></article>)}</div></div></section>
+      <section className="story section-space shell" id="story" aria-labelledby="story-title"><div className="story-year" aria-hidden="true"><span>SINCE</span><strong>1984</strong><span>IN THE KITCHEN</span></div><div className="story-copy"><h2 id="story-title">A GOOD MEAL HAS A STORY.</h2><p>Mr. Gabriel began working in restaurants in 1984. More than three decades in kitchens taught him the value of careful preparation, balanced seasoning and food that brings people to the table.</p><p>Today, Mr. James Chicken welcomes Phong Nha neighbors and travelers looking for a satisfying meal after a day out. Come in, take a seat and find your favorite.</p><a href={DIRECTIONS} target="_blank" rel="noopener noreferrer" className="text-link">Visit Gabriel’s kitchen <Icon name="arrow" size={18} /></a></div></section>
 
-        <section className="section" id="location"><div className="container location-grid"><div className="location-copy"><span className="kicker">Find us in Phong Nha</span><h2>Hours & location</h2><p>Located on the prominent ĐT20 road in the Xuân Tiến neighborhood, conveniently reachable by scooter, bicycle, or walking from major town hostels and hotels.</p><div className="hours-card"><div><h3>◷ Diner operating hours</h3><span>OPEN DAILY</span></div><p><b>Monday – Sunday</b><strong>10:00 AM – 10:30 PM</strong></p><p><b>Service</b><span>Dine-in · Takeaway · Walk-ins welcome</span></p></div><div className="contact-points"><div><Icon>⌖</Icon><p><b>Address</b><small>ĐT20, tổ dân phố Xuân Tiến, Phong Nha, Quảng Trị 47257, Vietnam</small></p></div><div><Icon>☎</Icon><p><b>Phone / Hotline</b><a href="tel:+84965030442">+84 965 030 442</a></p></div></div><div className="hero-actions"><a className="button primary" href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer">⌖ Open in Google Maps</a><a className="button outline" href="https://m.me/mrjameschicken" target="_blank" rel="noreferrer">✉ Message Facebook</a></div></div><div className="map-card"><div className="map-image"><Image src="/images/phong-nha-map.png" fill sizes="(max-width: 900px) 100vw, 50vw" alt="Map of Phong Nha around ĐT20" /><div className="map-pin"><Icon>⌖</Icon><b>Mr. James Chicken</b><small>ĐT20, Xuân Tiến</small></div></div><div><p><b>ĐT20, tổ dân phố Xuân Tiến</b><span>Phong Nha, Quảng Trị 47257, Vietnam</span></p><a className="button amber" href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer">Get directions</a></div></div></div></section>
+      <section className="reviews-section section-space" id="reviews" aria-labelledby="reviews-title"><div className="shell"><div className="reviews-heading"><h2 id="reviews-title">GOOD WORD TRAVELS.</h2><div><span aria-hidden="true">★★★★★</span><strong>4.9 / 5 Google rating</strong></div></div><div className="reviews-grid">{reviews.map((review) => <figure className="review" key={review.name}><blockquote>“{review.quote}”</blockquote><figcaption><strong>{review.name}</strong><span>{review.source}</span></figcaption></figure>)}</div></div></section>
 
-        <section className="section connect-section"><div className="container"><div className="section-heading centered"><span className="kicker">Say hello</span><h2>Connect with Mr. James Chicken</h2><p>Visiting Phong Nha or have questions about our menu?</p></div><div className="connect-grid"><a href="tel:+84965030442"><Icon>☎</Icon><h3>Direct phone call</h3><b>+84 965 030 442</b><span>Call during restaurant hours.</span></a><a href="https://m.me/mrjameschicken" target="_blank" rel="noreferrer"><Icon>✉</Icon><h3>Facebook Messenger</h3><b>mrjameschicken</b><span>Message for directions or questions.</span></a><a href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer"><Icon>⌖</Icon><h3>Google Maps</h3><b>Phong Nha, Quảng Trị</b><span>Read reviews and navigate easily.</span></a></div></div></section>
-      </main>
+      <section className="visit-section section-space" id="visit" aria-labelledby="visit-title"><div className="shell visit-grid"><div className="visit-copy"><h2 id="visit-title">COME HUNGRY.<br />LEAVE HAPPY.</h2><p>We’re on ĐT20 in Phong Nha. Drop in for a burger, a crispy chicken basket or something to share.</p><div className="visit-actions"><a className="button button-light" href={DIRECTIONS} target="_blank" rel="noopener noreferrer"><Icon name="pin" /> Get directions</a><a className="button button-ghost" href={PHONE}><Icon name="phone" /> Call us</a></div></div><div className="visit-details"><div><span>ADDRESS</span><p>ĐT20, tổ dân phố Xuân Tiến<br />Phong Nha, Quảng Trị 47257, Vietnam</p></div><div><span>OPENING HOURS</span><p>Every day<br />10:00 AM – 10:30 PM</p></div><div><span>SERVICE</span><p>Dine-in · Takeaway · Walk-ins welcome</p></div><div><span>PHONE</span><p><a href={PHONE}>+84 965 030 442</a></p></div></div></div></section>
+    </main>
 
-      <footer><div className="container footer-inner"><div className="footer-main"><div className="brand"><Image src="/images/logo.png" width={56} height={56} alt="Mr. James Chicken logo" /><span><strong>Mr. James Chicken Phong Nha</strong><small>Freshly prepared · Since 1984 heritage</small></span></div><nav aria-label="Footer navigation"><a href="#menu">Food Menu</a><a href="#bestsellers">Bestsellers</a><a href="#story">Our Story</a><a href="#location">Hours & Location</a><a href="tel:+84965030442">Call Hotline</a></nav></div><div className="copyright"><span>© 1984–2026 Mr. James Chicken Phong Nha. All rights reserved.</span><span>ĐT20, Xuân Tiến, Phong Nha, Vietnam</span></div></div></footer>
-      <nav className="mobile-actions" aria-label="Quick actions"><a href="tel:+84965030442">☎<span>Call</span></a><a href="#menu">☷<span>Menu</span></a><a href="https://maps.google.com/?q=Mr.+James+Chicken+Phong+Nha+Vietnam" target="_blank" rel="noreferrer">⌖<span>Directions</span></a></nav>
-    </>
-  );
+    <footer className="site-footer"><div className="shell footer-top"><a href="#home" className="brand-link" aria-label="Mr. James Chicken, back to top"><Brand /></a><nav aria-label="Footer navigation"><a href="#menu">Menu</a><a href="#story">Our story</a><a href="#reviews">Reviews</a><a href="#visit">Visit</a><a href={MESSENGER} target="_blank" rel="noopener noreferrer">Messenger</a></nav></div><div className="shell footer-bottom"><span>© 2026 Mr. James Chicken Phong Nha</span><span>ĐT20 · Xuân Tiến · Phong Nha</span></div></footer>
+    <nav className="mobile-actions" aria-label="Quick actions"><a href="#menu">View menu</a><a href={DIRECTIONS} target="_blank" rel="noopener noreferrer"><Icon name="pin" size={17} /> Directions</a></nav>
+  </>;
 }

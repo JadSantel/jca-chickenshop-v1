@@ -50,5 +50,6 @@ stitch-assets/
 .claude/
 .codex/
 .cursor/
-.impeccable/
+.impeccable/*
+!.impeccable/design.json
 .vscode/
