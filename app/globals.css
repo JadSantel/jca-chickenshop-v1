@@ -31,7 +31,7 @@ button { font: inherit; }
 .brand-link { display: inline-flex; flex-shrink: 0; align-items: center; }
 .brand-lockup { display: inline-flex; align-items: center; gap: .55rem; color: var(--burgundy); }
 .brand-mark { display: block; width: 3.35rem; height: 3.35rem; }
-.brand-mark svg { display: block; width: 100%; height: 100%; }
+.brand-mark img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .brand-type { display: grid; justify-items: center; line-height: .72; }
 .brand-type strong { font: 900 1.65rem/.75 var(--font-display), sans-serif; letter-spacing: -.02em; }
 .brand-type small { margin-top: .5rem; color: #a65a12; font: 800 .64rem/1 var(--font-body), sans-serif; letter-spacing: .27em; }

@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Barlow_Condensed, Work_Sans } from "next/font/google";
+import localFont from "next/font/local";
+import { Work_Sans } from "next/font/google";
 import "./globals.css";
 
-const barlowCondensed = Barlow_Condensed({ variable: "--font-display", subsets: ["latin", "vietnamese"], weight: ["500", "600", "700", "800", "900"] });
+const stockman = localFont({
+  src: [{ path: "./fonts/Stockman-Regular.otf", weight: "400", style: "normal" }],
+  variable: "--font-display",
+  display: "swap",
+});
 const workSans = Work_Sans({ variable: "--font-body", subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
@@ -11,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return <html lang="en" className={`${barlowCondensed.variable} ${workSans.variable}`}><body>{children}</body></html>;
+  return <html lang="en" className={`${stockman.variable} ${workSans.variable}`}><body>{children}</body></html>;
 }

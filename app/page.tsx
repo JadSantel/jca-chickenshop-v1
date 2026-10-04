@@ -55,7 +55,7 @@ function Icon({ name, size = 20 }: { name: "pin" | "arrow" | "clock" | "star" | 
 }
 
 function Brand() {
-  return <span className="brand-lockup"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M12 18c-2-4 0-7 4-7-1-4 2-7 6-6 2-4 7-3 9 1 4-1 7 2 6 6 5 7 0 21-11 25-7 3-15-2-17-9-1-4 0-7 3-10Z" fill="currentColor" /><path d="m34 19 11 5-10 4" fill="var(--gold)" /><circle cx="28" cy="17" r="2" fill="var(--cream)" /><path d="M19 29c4 2 8 2 12 0" stroke="var(--cream)" strokeWidth="2" strokeLinecap="round" /></svg></span><span className="brand-type"><strong>MR. JAMES<br />CHICKEN</strong><small>PHONG NHA</small></span></span>;
+  return <span className="brand-lockup"><span className="brand-mark" aria-hidden="true"><Image src="/images/mr-james-logo.png" alt="Mr. James Chicken logo" width={120} height={120} priority /></span><span className="brand-type"><strong>MR. JAMES<br />CHICKEN</strong><small>PHONG NHA</small></span></span>;
 }
 
 export default function Home() {
