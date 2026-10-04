@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Project docs & design assets (internal use only)
+DESIGN.md.md
+PRODUCT.md.md
+PROJECT.md
+stitch-assets/
+
+# AI coding assistants & editor config
+.claude/
+.codex/
+.cursor/
+.impeccable/
+.vscode/
